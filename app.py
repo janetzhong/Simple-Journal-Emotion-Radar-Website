@@ -42,6 +42,10 @@ def plot_emotion_radar(scores, labels):
 def main():
     """Run the main Streamlit app."""
     st.title('Journal Emotion Radar')
+    
+    # Link to view the source code
+    source_code_url = "https://github.com/janetzhong/Simple-Journal-Emotion-Radar-Website"
+    st.markdown(f"[View Source Code]({source_code_url})", unsafe_allow_html=True)
 
     # Main area for user text input
     user_input = st.text_area("Enter your journal entry or text here:", height=150)
