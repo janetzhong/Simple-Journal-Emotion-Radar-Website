@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import requests
 
-def classify_emotion(text, token):
+def classify_emotion(text):
     """Classify the emotion of the given text using the Hugging Face Inference API."""
     api_url = "https://api-inference.huggingface.co/models/michellejieli/emotion_text_classifier"
     
-    # Prepare the headers with the API token
-    headers = {"Authorization": f"Bearer {token}"}
+    # Directly include the API token in the headers
+    api_token = "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"  # Replace with your actual API key
+    headers = {"Authorization": f"Bearer {api_token}"}
 
     # Prepare the payload
     payload = {"inputs": text, "options": {"wait_for_model": True}, "parameters": {"return_all_scores": True}}
@@ -42,37 +43,26 @@ def main():
     """Run the main Streamlit app."""
     st.title('Journal Emotion Radar')
 
-    # Correctly access the Hugging Face API key from secrets.toml
-    token = st.secrets["HuggingFace"]["HUGGINGFACE_TOKEN"] if "HuggingFace" in st.secrets else None
-    if not token:
-        with st.sidebar:
-            token = st.text_input("Enter your Hugging Face API token:", key="api_key", type="password")
-
     # Main area for user text input
     user_input = st.text_area("Enter your journal entry or text here:", height=150)
 
     # Button to classify text
     submit = st.button('Submit')
 
-    if submit:
-        if not token:
-            st.warning('Please enter your Hugging Face API token in the sidebar.', icon="⚠️")
-        elif not user_input:
-            st.warning('Please enter some text to analyze.', icon="⚠️")
-        else:
-            # Classify the emotion
-            try:
-                results = classify_emotion(user_input, token)
-                
-                # Extract labels and scores for plotting
-                labels = [result['label'] for result in results[0]]
-                scores = [result['score'] for result in results[0]]
+    if submit and user_input:
+        # Classify the emotion without needing to ask for an API key
+        try:
+            results = classify_emotion(user_input)
+            
+            # Extract labels and scores for plotting
+            labels = [result['label'] for result in results[0]]
+            scores = [result['score'] for result in results[0]]
 
-                # Plot and display the radar chart
-                fig = plot_emotion_radar(scores, labels)
-                st.pyplot(fig)
-            except Exception as e:
-                st.error(f"Error in emotion classification: {e}")
+            # Plot and display the radar chart
+            fig = plot_emotion_radar(scores, labels)
+            st.pyplot(fig)
+        except Exception as e:
+            st.error(f"Error in emotion classification: {e}")
 
 if __name__ == "__main__":
     main()
