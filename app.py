@@ -42,12 +42,12 @@ def main():
     """Run the main Streamlit app."""
     st.title('Journal Emotion Radar')
 
-    # Attempt to access the Hugging Face API key from secrets.toml or sidebar
-    token = st.secrets["HuggingFace"]["HUGGINGFACE_TOKEN"] if "huggingface" in st.secrets else None
+    # Correctly access the Hugging Face API key from secrets.toml
+    token = st.secrets["HuggingFace"]["HUGGINGFACE_TOKEN"] if "HuggingFace" in st.secrets else None
     if not token:
         with st.sidebar:
             token = st.text_input("Enter your Hugging Face API token:", key="api_key", type="password")
-    
+
     # Main area for user text input
     user_input = st.text_area("Enter your journal entry or text here:", height=150)
 
